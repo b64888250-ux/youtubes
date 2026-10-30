@@ -1,0 +1,316 @@
+game-portal/
+├── index.html
+├── style.css
+├── script.js
+└── games.json
+[
+  {
+    "id": "2048",
+    "title": "2048",
+    "category": "Puzzle",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/2048_logo.svg/300px-2048_logo.svg.png",
+    "iframeUrl": "https://play2048.co/"
+  },
+  {
+    "id": "hextris",
+    "title": "Hextris",
+    "category": "Arcade",
+    "thumbnail": "https://hextris.io/images/favicons/favicon.ico",
+    "iframeUrl": "https://hextris.io/"
+  },
+  {
+    "id": "pacman",
+    "title": "Pac-Man Canvas",
+    "category": "Retro",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/2/26/Pac-Man_Cutscene.svg",
+    "iframeUrl": "https://pacman.platzh1rsch.ch/"
+  }
+]<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Arcade</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="logo">🎮 <span>Portal</span>Arcade</div>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search games...">
+    </div>
+  </header>
+
+  <!-- Main Games Grid View -->
+  <main class="container" id="grid-view">
+    <section class="games-grid" id="games-grid">
+      <!-- Game cards are inserted dynamically by script.js -->
+    </section>
+  </main>
+
+  <!-- Game Player Screen (Hidden by default) -->
+  <div class="player-overlay" id="player-view" style="display: none;">
+    <div class="player-header">
+      <button id="back-btn" class="btn">← Back to Games</button>
+      <h2 id="current-game-title">Game Title</h2>
+      <button id="fullscreen-btn" class="btn">⛶ Fullscreen</button>
+    </div>
+    <div class="iframe-container">
+      <iframe 
+        id="game-frame" 
+        src="" 
+        allow="autoplay; fullscreen; gamepad; focus-without-user-activation" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: #0f172a;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.logo span {
+  color: #38bdf8;
+}
+
+.search-box input {
+  padding: 0.6rem 1.2rem;
+  width: 260px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #fff;
+  outline: none;
+  transition: width 0.2s, border-color 0.2s;
+}
+
+.search-box input:focus {
+  border-color: #38bdf8;
+  width: 320px;
+}
+
+/* Grid View */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Game Cards */
+.game-card {
+  background-color: #1e293b;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  border-color: #38bdf8;
+}
+
+.game-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  background-color: #0f172a;
+}
+
+.game-info {
+  padding: 1rem;
+}
+
+.game-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.game-info .badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  background-color: #334155;
+  color: #94a3b8;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Player View */
+.player-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #0b0f19;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.btn {
+  background-color: #334155;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #475569;
+}
+
+.iframe-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}let allGames = [];
+
+const gamesGrid = document.getElementById('games-grid');
+const searchInput = document.getElementById('search-input');
+const gridView = document.getElementById('grid-view');
+const playerView = document.getElementById('player-view');
+const gameFrame = document.getElementById('game-frame');
+const currentGameTitle = document.getElementById('current-game-title');
+const backBtn = document.getElementById('back-btn');
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+// 1. Fetch Games from JSON
+async function loadGames() {
+  try {
+    const res = await fetch('games.json');
+    if (!res.ok) throw new Error('Failed to load games.json');
+    allGames = await res.json();
+    renderCards(allGames);
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    gamesGrid.innerHTML = `<p style="color: #ef4444;">Failed to load games catalog.</p>`;
+  }
+}
+
+// 2. Render Cards to Grid
+function renderCards(games) {
+  gamesGrid.innerHTML = '';
+
+  if (games.length === 0) {
+    gamesGrid.innerHTML = '<p>No games found matching your search.</p>';
+    return;
+  }
+
+  games.forEach(game => {
+    const card = document.createElement('div');
+    card.classList.add('game-card');
+    card.innerHTML = `
+      <img src="${game.thumbnail}" alt="${game.title}" loading="lazy">
+      <div class="game-info">
+        <h3>${game.title}</h3>
+        <span class="badge">${game.category || 'Game'}</span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => openGame(game));
+    gamesGrid.appendChild(card);
+  });
+}
+
+// 3. Open Game in Player View
+function openGame(game) {
+  currentGameTitle.textContent = game.title;
+  gameFrame.src = game.iframeUrl; // Insert iframe source
+
+  gridView.style.display = 'none';
+  playerView.style.display = 'flex';
+}
+
+// 4. Close Game and Return to Grid
+function closeGame() {
+  // Clear the src attribute so background game audio stops playing
+  gameFrame.src = '';
+  
+  playerView.style.display = 'none';
+  gridView.style.display = 'block';
+}
+
+// 5. Search Filter
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase().trim();
+  const filtered = allGames.filter(game => 
+    game.title.toLowerCase().includes(query) || 
+    (game.category && game.category.toLowerCase().includes(query))
+  );
+  renderCards(filtered);
+});
+
+// 6. Navigation and Fullscreen Controls
+backBtn.addEventListener('click', closeGame);
+
+fullscreenBtn.addEventListener('click', () => {
+  if (gameFrame.requestFullscreen) {
+    gameFrame.requestFullscreen();
+  } else if (gameFrame.webkitRequestFullscreen) { /* Safari */
+    gameFrame.webkitRequestFullscreen();
+  } else if (gameFrame.msRequestFullscreen) { /* IE11 */
+    gameFrame.msRequestFullscreen();
+  }
+});
+
+// Initialize on page load
+loadGames();
+python3 -m http.server 8000
+npx serve .
